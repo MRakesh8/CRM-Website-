@@ -1,69 +1,158 @@
+import { useState } from "react";
 import { useListUsers, getListUsersQueryKey, useDeleteUser } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StatusBadge, RoleBadge } from "@/components/StatusBadge";
+import { TeamMemberDialog } from "@/components/dialogs/TeamMemberDialog";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Users, ShieldAlert, Mail } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Team() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+
   const { data: users, isLoading } = useListUsers();
   const queryClient = useQueryClient();
   const deleteUser = useDeleteUser();
+  const { toast } = useToast();
+  const { user: currentUser } = useAuth();
 
-  const handleDelete = (id: number) => {
-    if (confirm("Are you sure?")) {
-      deleteUser.mutate({ id }, {
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() })
-      });
-    }
+  const handleCreate = () => {
+    setEditingUser(null);
+    setDialogOpen(true);
   };
 
-  if (isLoading) return <div className="p-8">Loading team...</div>;
+  const handleEdit = (user: any) => {
+    setEditingUser(user);
+    setDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (!deleteId) return;
+    deleteUser.mutate({ id: deleteId }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
+        toast({ title: "User deleted successfully" });
+        setDeleteId(null);
+      },
+      onError: (err: any) => {
+        toast({ variant: "destructive", title: "Error", description: err?.response?.data?.error || "Failed to delete user" });
+        setDeleteId(null);
+      }
+    });
+  };
+
+  const isAdmin = currentUser?.role === 'super_admin' || currentUser?.role === 'manager';
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Team Members</h1>
-          <p className="text-muted-foreground mt-1">Manage user access and roles.</p>
+          <p className="text-muted-foreground mt-1">Manage user access, roles, and permissions.</p>
         </div>
-        <Button>Invite Member</Button>
+        {isAdmin && (
+          <Button onClick={handleCreate}>
+            <Plus className="w-4 h-4 mr-2" /> Add Team Member
+          </Button>
+        )}
       </div>
 
-      <div className="border rounded-md">
+      <div className="border rounded-md bg-card">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+            <TableRow className="bg-muted/30">
+              <TableHead className="pl-6 font-semibold">User</TableHead>
+              <TableHead className="font-semibold">Email</TableHead>
+              <TableHead className="font-semibold">Role</TableHead>
+              <TableHead className="font-semibold">Status</TableHead>
+              <TableHead className="font-semibold">Joined</TableHead>
+              {isAdmin && <TableHead className="text-right pr-6 font-semibold">Actions</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users?.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell className="capitalize">{user.role.replace('_', ' ')}</TableCell>
-                <TableCell>
-                  <span className="text-xs px-2 py-1 bg-secondary rounded uppercase">{user.status}</span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="outline" size="sm" className="mr-2">Edit</Button>
-                  <Button variant="destructive" size="sm" onClick={() => handleDelete(user.id)}>Delete</Button>
-                </TableCell>
-              </TableRow>
-            ))}
-            {!users?.length && (
+            {isLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell className="pl-6"><Skeleton className="h-5 w-[150px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-[100px]" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-[80px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                  {isAdmin && <TableCell className="pr-6"><Skeleton className="h-8 w-[100px] ml-auto" /></TableCell>}
+                </TableRow>
+              ))
+            ) : users && users.length > 0 ? (
+              users.map((user) => (
+                <TableRow key={user.id} className="hover:bg-muted/50 transition-colors">
+                  <TableCell className="pl-6 font-medium">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                        {user.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        {user.name}
+                        {currentUser?.id === user.id && <span className="ml-2 text-xs text-muted-foreground font-normal bg-muted px-1.5 py-0.5 rounded">You</span>}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Mail className="w-3.5 h-3.5" />
+                      {user.email}
+                    </div>
+                  </TableCell>
+                  <TableCell><RoleBadge role={user.role} /></TableCell>
+                  <TableCell><StatusBadge status={user.status || 'active'} type="user" /></TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  {isAdmin && (
+                    <TableCell className="text-right pr-6">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => handleEdit(user)}>Edit</Button>
+                        {currentUser?.id !== user.id && (
+                          <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => setDeleteId(user.id)}>Delete</Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
+            ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
-                  No team members found.
+                <TableCell colSpan={isAdmin ? 6 : 5} className="h-64 text-center">
+                  <div className="flex flex-col items-center justify-center text-muted-foreground">
+                    <Users className="w-12 h-12 mb-4 text-muted-foreground/50" />
+                    <p className="text-lg font-medium">No team members found</p>
+                    <p className="text-sm mb-4">Add people to collaborate in your workspace.</p>
+                    {isAdmin && <Button variant="outline" onClick={handleCreate}>Add Team Member</Button>}
+                  </div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
+
+      <TeamMemberDialog 
+        open={dialogOpen} 
+        onOpenChange={setDialogOpen} 
+        user={editingUser} 
+      />
+
+      <ConfirmDialog
+        open={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title="Remove Team Member"
+        description="Are you sure you want to remove this user from the workspace? They will lose all access immediately."
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }
