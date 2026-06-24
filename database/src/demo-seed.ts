@@ -39,12 +39,12 @@ async function run() {
 
     // 2. Leads
     const leadsData = [
-      { title: "Enterprise Software License", name: "Robert Fox", email: "rfox@vertex.com", phone: "+1 (415) 555-8832", company: "Vertex Analytics", status: "qualified", value: 125000, assignedTo: adminUser.id, createdAt: new Date("2026-06-10T09:30:00Z") },
-      { title: "Q3 Marketing Campaign", name: "Jenny Wilson", email: "jwilson@aurora.io", phone: "+1 (650) 555-9921", company: "Aurora Tech", status: "contacted", value: 45000, assignedTo: adminUser.id, createdAt: new Date("2026-06-15T14:00:00Z") },
-      { title: "Office Network Upgrade", name: "Guy Hawkins", email: "ghawkins@nexus.net", phone: "+1 (212) 555-7745", company: "Nexus Systems", status: "proposal", value: 85000, assignedTo: adminUser.id, createdAt: new Date("2026-06-18T11:45:00Z") },
-      { title: "Annual Support Contract", name: "Bessie Cooper", email: "bcooper@pinnacle.org", phone: "+1 (312) 555-6623", company: "Pinnacle Health", status: "new", value: 24000, assignedTo: adminUser.id, createdAt: new Date("2026-06-20T16:15:00Z") },
-      { title: "Cloud Migration Project", name: "Jerome Bell", email: "jbell@cloudscale.com", phone: "+1 (512) 555-5512", company: "CloudScale Inc", status: "won", value: 150000, assignedTo: adminUser.id, createdAt: new Date("2026-05-05T10:00:00Z") },
-      { title: "Website Redesign", name: "Kristin Watson", email: "kwatson@creative.design", phone: "+1 (303) 555-4498", company: "Creative Minds", status: "lost", value: 18000, assignedTo: adminUser.id, createdAt: new Date("2026-04-12T13:20:00Z") },
+      { name: "Robert Fox", email: "rfox@vertex.com", phone: "+1 (415) 555-8832", companyName: "Vertex Analytics", stage: "qualified", value: "125000", assigneeId: adminUser.id, createdAt: new Date("2026-06-10T09:30:00Z") },
+      { name: "Jenny Wilson", email: "jwilson@aurora.io", phone: "+1 (650) 555-9921", companyName: "Aurora Tech", stage: "contacted", value: "45000", assigneeId: adminUser.id, createdAt: new Date("2026-06-15T14:00:00Z") },
+      { name: "Guy Hawkins", email: "ghawkins@nexus.net", phone: "+1 (212) 555-7745", companyName: "Nexus Systems", stage: "proposal", value: "85000", assigneeId: adminUser.id, createdAt: new Date("2026-06-18T11:45:00Z") },
+      { name: "Bessie Cooper", email: "bcooper@pinnacle.org", phone: "+1 (312) 555-6623", companyName: "Pinnacle Health", stage: "new", value: "24000", assigneeId: adminUser.id, createdAt: new Date("2026-06-20T16:15:00Z") },
+      { name: "Jerome Bell", email: "jbell@cloudscale.com", phone: "+1 (512) 555-5512", companyName: "CloudScale Inc", stage: "won", value: "150000", assigneeId: adminUser.id, createdAt: new Date("2026-05-05T10:00:00Z") },
+      { name: "Kristin Watson", email: "kwatson@creative.design", phone: "+1 (303) 555-4498", companyName: "Creative Minds", stage: "lost", value: "18000", assigneeId: adminUser.id, createdAt: new Date("2026-04-12T13:20:00Z") },
     ];
     await db.insert(leadsTable).values(leadsData);
 
@@ -83,12 +83,12 @@ async function run() {
 
     // 6. Invoices
     const invoicesData = [
-      { invoiceNumber: "INV-2026-042", clientId: clients[0].id, projectId: projects[0].id, amount: 2500000, items: [{ description: "ERP Implementation Milestone 2", quantity: 1, rate: 25000, amount: 25000 }], subtotal: "25000.00", total: "25000.00", status: "paid", issueDate: "2026-05-01", dueDate: "2026-05-31", createdAt: new Date("2026-05-01T09:00:00Z") },
-      { invoiceNumber: "INV-2026-056", clientId: clients[2].id, projectId: projects[2].id, amount: 1500000, items: [{ description: "API Development Sprint 3", quantity: 1, rate: 15000, amount: 15000 }], subtotal: "15000.00", total: "15000.00", status: "sent", issueDate: "2026-06-15", dueDate: "2026-07-15", createdAt: new Date("2026-06-15T10:30:00Z") },
-      { invoiceNumber: "INV-2026-061", clientId: clients[4].id, projectId: projects[4].id, amount: 850000, items: [{ description: "Dashboard UI/UX Design", quantity: 1, rate: 8500, amount: 8500 }], subtotal: "8500.00", total: "8500.00", status: "draft", issueDate: "2026-06-25", dueDate: "2026-07-25", createdAt: new Date("2026-06-24T14:15:00Z") },
-      { invoiceNumber: "INV-2026-038", clientId: clients[5].id, projectId: projects[5].id, amount: 1200000, items: [{ description: "Final Project Handover & Support", quantity: 1, rate: 12000, amount: 12000 }], subtotal: "12000.00", total: "12000.00", status: "overdue", issueDate: "2026-04-10", dueDate: "2026-05-10", createdAt: new Date("2026-04-10T11:20:00Z") },
-      { invoiceNumber: "INV-2026-021", clientId: clients[3].id, projectId: projects[3].id, amount: 500000, items: [{ description: "Monthly Server Maintenance", quantity: 1, rate: 5000, amount: 5000 }], subtotal: "5000.00", total: "5000.00", status: "cancelled", issueDate: "2026-02-01", dueDate: "2026-03-01", createdAt: new Date("2026-02-01T08:45:00Z") },
-      { invoiceNumber: "INV-2026-065", clientId: clients[1].id, projectId: projects[1].id, amount: 1800000, items: [{ description: "Mobile App Discovery Phase", quantity: 1, rate: 18000, amount: 18000 }], subtotal: "18000.00", total: "18000.00", status: "draft", issueDate: "2026-07-01", dueDate: "2026-07-31", createdAt: new Date("2026-06-20T16:30:00Z") },
+      { invoiceNumber: "INV-2026-042", clientId: clients[0].id, projectId: projects[0].id, amount: 2500000, items: [{ description: "ERP Implementation Milestone 2", quantity: 1, unitPrice: 25000, amount: 25000 }], subtotal: "25000.00", total: "25000.00", status: "paid", issueDate: "2026-05-01", dueDate: "2026-05-31", createdAt: new Date("2026-05-01T09:00:00Z") },
+      { invoiceNumber: "INV-2026-056", clientId: clients[2].id, projectId: projects[2].id, amount: 1500000, items: [{ description: "API Development Sprint 3", quantity: 1, unitPrice: 15000, amount: 15000 }], subtotal: "15000.00", total: "15000.00", status: "sent", issueDate: "2026-06-15", dueDate: "2026-07-15", createdAt: new Date("2026-06-15T10:30:00Z") },
+      { invoiceNumber: "INV-2026-061", clientId: clients[4].id, projectId: projects[4].id, amount: 850000, items: [{ description: "Dashboard UI/UX Design", quantity: 1, unitPrice: 8500, amount: 8500 }], subtotal: "8500.00", total: "8500.00", status: "draft", issueDate: "2026-06-25", dueDate: "2026-07-25", createdAt: new Date("2026-06-24T14:15:00Z") },
+      { invoiceNumber: "INV-2026-038", clientId: clients[5].id, projectId: projects[5].id, amount: 1200000, items: [{ description: "Final Project Handover & Support", quantity: 1, unitPrice: 12000, amount: 12000 }], subtotal: "12000.00", total: "12000.00", status: "overdue", issueDate: "2026-04-10", dueDate: "2026-05-10", createdAt: new Date("2026-04-10T11:20:00Z") },
+      { invoiceNumber: "INV-2026-021", clientId: clients[3].id, projectId: projects[3].id, amount: 500000, items: [{ description: "Monthly Server Maintenance", quantity: 1, unitPrice: 5000, amount: 5000 }], subtotal: "5000.00", total: "5000.00", status: "cancelled", issueDate: "2026-02-01", dueDate: "2026-03-01", createdAt: new Date("2026-02-01T08:45:00Z") },
+      { invoiceNumber: "INV-2026-065", clientId: clients[1].id, projectId: projects[1].id, amount: 1800000, items: [{ description: "Mobile App Discovery Phase", quantity: 1, unitPrice: 18000, amount: 18000 }], subtotal: "18000.00", total: "18000.00", status: "draft", issueDate: "2026-07-01", dueDate: "2026-07-31", createdAt: new Date("2026-06-20T16:30:00Z") },
     ];
     await db.insert(invoicesTable).values(invoicesData);
 
