@@ -12,4 +12,6 @@ export interface UserUpdate {
   role?: string;
   status?: string;
   avatarUrl?: string;
+  isActive?: boolean;
+  roleId?: number;
 }

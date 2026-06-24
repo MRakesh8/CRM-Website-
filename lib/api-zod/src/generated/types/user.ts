@@ -19,4 +19,6 @@ export interface User {
   /** @nullable */
   projectsCount?: number | null;
   createdAt: string;
+  isActive?: boolean;
+  roleId?: number;
 }

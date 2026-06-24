@@ -34,6 +34,8 @@ export interface User {
   /** @nullable */
   projectsCount?: number | null;
   createdAt: string;
+  isActive?: boolean;
+  roleId?: number;
 }
 
 export interface AuthResponse {
@@ -55,6 +57,8 @@ export interface UserUpdate {
   role?: string;
   status?: string;
   avatarUrl?: string;
+  isActive?: boolean;
+  roleId?: number;
 }
 
 export interface Client {
@@ -434,6 +438,29 @@ export interface PipelineStageCount {
   value: number;
 }
 
+export interface Role {
+  id: number;
+  name: string;
+  description?: string;
+  isSystem: boolean;
+  createdAt: string;
+  permissions: string[];
+}
+
+export interface RoleInput {
+  name: string;
+  description?: string;
+  permissions?: string[];
+}
+
+export interface Permission {
+  id: number;
+  permissionKey: string;
+  permissionName: string;
+  module: string;
+  description?: string;
+}
+
 export type ListClientsParams = {
 search?: string;
 status?: string;
@@ -470,4 +497,6 @@ export type ListEventsParams = {
 start?: string;
 end?: string;
 };
+
+export type ListPermissions200 = {[key: string]: Permission[]};
 

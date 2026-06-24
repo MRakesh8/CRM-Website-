@@ -33,7 +33,9 @@ export const LoginResponse = zod.object({
   "status": zod.string().describe('active | suspended'),
   "avatarUrl": zod.string().nullish(),
   "projectsCount": zod.number().nullish(),
-  "createdAt": zod.string()
+  "createdAt": zod.string(),
+  "isActive": zod.boolean().optional(),
+  "roleId": zod.number().optional()
 }),
   "token": zod.string()
 })
@@ -61,7 +63,9 @@ export const GetMeResponse = zod.object({
   "status": zod.string().describe('active | suspended'),
   "avatarUrl": zod.string().nullish(),
   "projectsCount": zod.number().nullish(),
-  "createdAt": zod.string()
+  "createdAt": zod.string(),
+  "isActive": zod.boolean().optional(),
+  "roleId": zod.number().optional()
 })
 
 
@@ -76,7 +80,9 @@ export const ListUsersResponseItem = zod.object({
   "status": zod.string().describe('active | suspended'),
   "avatarUrl": zod.string().nullish(),
   "projectsCount": zod.number().nullish(),
-  "createdAt": zod.string()
+  "createdAt": zod.string(),
+  "isActive": zod.boolean().optional(),
+  "roleId": zod.number().optional()
 })
 export const ListUsersResponse = zod.array(ListUsersResponseItem)
 
@@ -105,7 +111,9 @@ export const GetUserResponse = zod.object({
   "status": zod.string().describe('active | suspended'),
   "avatarUrl": zod.string().nullish(),
   "projectsCount": zod.number().nullish(),
-  "createdAt": zod.string()
+  "createdAt": zod.string(),
+  "isActive": zod.boolean().optional(),
+  "roleId": zod.number().optional()
 })
 
 
@@ -118,7 +126,9 @@ export const UpdateUserBody = zod.object({
   "email": zod.string().optional(),
   "role": zod.string().optional(),
   "status": zod.string().optional(),
-  "avatarUrl": zod.string().optional()
+  "avatarUrl": zod.string().optional(),
+  "isActive": zod.boolean().optional(),
+  "roleId": zod.number().optional()
 })
 
 export const UpdateUserResponse = zod.object({
@@ -129,7 +139,9 @@ export const UpdateUserResponse = zod.object({
   "status": zod.string().describe('active | suspended'),
   "avatarUrl": zod.string().nullish(),
   "projectsCount": zod.number().nullish(),
-  "createdAt": zod.string()
+  "createdAt": zod.string(),
+  "isActive": zod.boolean().optional(),
+  "roleId": zod.number().optional()
 })
 
 
@@ -922,5 +934,72 @@ export const GetLeadPipelineResponseItem = zod.object({
   "value": zod.number()
 })
 export const GetLeadPipelineResponse = zod.array(GetLeadPipelineResponseItem)
+
+
+/**
+ * @summary List roles
+ */
+export const ListRolesResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "description": zod.string().optional(),
+  "isSystem": zod.boolean(),
+  "createdAt": zod.string(),
+  "permissions": zod.array(zod.string())
+})
+export const ListRolesResponse = zod.array(ListRolesResponseItem)
+
+
+/**
+ * @summary Create role
+ */
+export const CreateRoleBody = zod.object({
+  "name": zod.string(),
+  "description": zod.string().optional(),
+  "permissions": zod.array(zod.string()).optional()
+})
+
+
+/**
+ * @summary Update role
+ */
+export const UpdateRoleParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateRoleBody = zod.object({
+  "name": zod.string(),
+  "description": zod.string().optional(),
+  "permissions": zod.array(zod.string()).optional()
+})
+
+export const UpdateRoleResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "description": zod.string().optional(),
+  "isSystem": zod.boolean(),
+  "createdAt": zod.string(),
+  "permissions": zod.array(zod.string())
+})
+
+
+/**
+ * @summary Delete role
+ */
+export const DeleteRoleParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+
+/**
+ * @summary List permissions
+ */
+export const ListPermissionsResponse = zod.record(zod.string(), zod.array(zod.object({
+  "id": zod.number(),
+  "permissionKey": zod.string(),
+  "permissionName": zod.string(),
+  "module": zod.string(),
+  "description": zod.string().optional()
+})))
 
 
